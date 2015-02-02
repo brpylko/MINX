@@ -41,26 +41,26 @@ OBJECTS = $(patsubst src/%.cpp,src/%.o,$(wildcard src/*.cpp)) $(patsubst src/Gra
 
 all: $(OBJECTS)
 	test -d bin/ || mkdir -p bin/
-	$(CXX) $(CPPFLAGS) $(OBJECTS) $(LFLAGS) -o bin/libMINX.$(EXTENSION)
+	$(CXX) $(CPPFLAGS) $(OBJECTS) $(LFLAGS) -o bin/libSLMINX.$(EXTENSION)
 
 x86: CPPFLAGS += -m32 -march=i686 -mtune=i686
 x86 : all;
 
 clean:
 	@for dir in src; do find $$dir -name \*.o -exec $(RMCOMMAND) {} \; ; done
-	$(RMCOMMAND) bin/libMINX.$(EXTENSION)
+	$(RMCOMMAND) bin/libSLMINX.$(EXTENSION)
 	rm -rf doxygen
 	
 install:
-	cp bin/libMINX.$(EXTENSION) $(INSTALLTARGET)
-	test -d /usr/include/MINX || mkdir -p /usr/include/MINX
-	test -d /usr/include/MINX/Input || mkdir -p /usr/include/MINX/Input
-	test -d /usr/include/MINX/Graphics || mkdir -p /usr/include/MINX/Graphics
-	test -d /usr/include/MINX/Media || mkdir -p /usr/include/MINX/Media
-	cp -u -r src/*.hpp /usr/include/MINX/
-	cp -u -r src/Input/*.hpp /usr/include/MINX/Input
-	cp -u -r src/Graphics/*.hpp /usr/include/MINX/Graphics
-	cp -u -r src/Media/*.hpp /usr/include/MINX/Media
+	cp bin/libSLMINX.$(EXTENSION) $(INSTALLTARGET)
+	test -d /usr/include/SLMINX || mkdir -p /usr/include/SLMINX
+	test -d /usr/include/SLMINX/Input || mkdir -p /usr/include/SLMINX/Input
+	test -d /usr/include/SLMINX/Graphics || mkdir -p /usr/include/SLMINX/Graphics
+	test -d /usr/include/SLMINX/Media || mkdir -p /usr/include/SLMINX/Media
+	cp -u -r src/*.hpp /usr/include/SLMINX/
+	cp -u -r src/Input/*.hpp /usr/include/SLMINX/Input
+	cp -u -r src/Graphics/*.hpp /usr/include/SLMINX/Graphics
+	cp -u -r src/Media/*.hpp /usr/include/SLMINX/Media
 doxygen:
 	doxygen
 
