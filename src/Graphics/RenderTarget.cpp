@@ -68,5 +68,5 @@ void RenderTarget::Clear(Color clearColor)
 {
 	GLfloat color[] = {GLfloat(clearColor.R)/255.f, GLfloat(clearColor.G)/255.f, GLfloat(clearColor.B)/255.f, GLfloat(clearColor.A)/255.f};
 	glClearColor(color[0], color[1], color[2], color[3]);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

@@ -38,6 +38,12 @@ TextureBatch::TextureBatch(GLuint shaderProgram)
 	texCoord = glGetAttribLocation(shaderProgram, "texcoord");
 	tintCoord = glGetAttribLocation(shaderProgram, "tint");
 	uniformTexture = glGetUniformLocation(shaderProgram, "tex");
+	
+	glClearDepth(0.0f);
+	glDepthFunc(GL_GREATER);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDepthRange(1080.0,0.0);
 
 	glGenVertexArrays(1, &vertexArray);
 	glGenBuffers(1, &vertexBuffer);
@@ -183,6 +189,50 @@ void TextureBatch::Draw(Texture2D* texture, float x, float y)
 	currentBatch->AddPoint(Vector2(br.x,br.y), Vector2(1,1));
 	//Bottom Left
 	currentBatch->AddPoint(Vector2(bl.x, bl.y), Vector2(0, 1));
+
+	//Add Tint
+	currentBatch->AddTint(Color());
+}
+void TextureBatch::Draw(Texture2D* texture, Vector2 pos, Vector2 depth)
+{
+	glm::mat4 projectionMatrix;
+	int width = texture->GetWidth();
+	int height = texture->GetHeight();
+
+	//because the clipping plane isn't working correctly for some reason
+	//1080 is going to be our hard coded value for depth, because we'll render to a 1920x1080 render target which will then be scaled down to the user's resolution
+	depth /= 540;
+	depth -= Vector2(1,1);
+
+
+	//make new translation matrix
+	projectionMatrix = glm::translate(projectionMatrix, glm::vec3(pos.X + width/2.0f, pos.Y + height / 2.0f, 1));
+
+	BatchData* currentBatch = GetBatchForTexture(texture->texture);
+
+	if(currentBatch == NULL)
+	{
+		currentBatch = new BatchData();
+		currentBatch->texture = texture->texture;
+		currentBatch->posPoints = std::vector<GLfloat>();
+		currentBatch->texPoints = std::vector<GLfloat>();
+		currentBatch->tintPoints = std::vector<GLfloat>();
+		currentBatch->spriteCount = 0;
+		batches.push_back(currentBatch);
+	}
+
+	glm::vec4 tl = projectionMatrix * glm::vec4(-width/2.0f, height/2.0f, 0, 1);
+	glm::vec4 tr = projectionMatrix * glm::vec4(width/2.0f, height/2.0f, 0, 1);
+	glm::vec4 br = projectionMatrix * glm::vec4(width/2.0f, -height/2.0f, 0, 1);
+	glm::vec4 bl = projectionMatrix * glm::vec4(-width/2.0f, -height/2.0f, 0, 1);
+	//Top Left
+	currentBatch->AddPoint(Vector2(tl.x, tl.y), depth.X, Vector2(0,0));
+	//Top Right
+	currentBatch->AddPoint(Vector2(tr.x,tr.y), depth.Y, Vector2(1,0));
+	//Bottom Right
+	currentBatch->AddPoint(Vector2(br.x,br.y), depth.Y, Vector2(1,1));
+	//Bottom Left
+	currentBatch->AddPoint(Vector2(bl.x, bl.y), depth.X, Vector2(0, 1));
 
 	//Add Tint
 	currentBatch->AddTint(Color());
@@ -797,6 +847,16 @@ void BatchData::AddPoint(Vector2 position, Vector2 texCoord)
 	posPoints.push_back(static_cast<float>(position.X));
 	posPoints.push_back(static_cast<float>(position.Y));
 	posPoints.push_back(0.0f);
+
+	texPoints.push_back(static_cast<float>(texCoord.X));
+	texPoints.push_back(static_cast<float>(texCoord.Y));
+}
+
+void BatchData::AddPoint(Vector2 position, float z, Vector2 texCoord)
+{
+	posPoints.push_back(static_cast<float>(position.X));
+	posPoints.push_back(static_cast<float>(position.Y));
+	posPoints.push_back(static_cast<float>(z));
 
 	texPoints.push_back(static_cast<float>(texCoord.X));
 	texPoints.push_back(static_cast<float>(texCoord.Y));

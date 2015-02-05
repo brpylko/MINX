@@ -188,6 +188,6 @@ void Game::SetRenderTarget(RenderTarget* target, Color clearColor)
 	}
 	GLfloat color[] = {static_cast<GLfloat>(clearColor.R)/255.f, static_cast<GLfloat>(clearColor.G)/255.f, static_cast<GLfloat>(clearColor.B)/255.f, static_cast<GLfloat>(clearColor.A)/255.f};
 	glClearColor(color[0], color[1], color[2], color[3]);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 }

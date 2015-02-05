@@ -68,6 +68,10 @@ namespace MINX
 			/** Adds a point into the batch for the current sprite
 			 */
 			void AddPoint(Vector2 position, Vector2 texCoord);
+
+			/** Adds a point into the batch for the current sprite
+			 */
+			void AddPoint(Vector2 position, float z, Vector2 texCoord);
 			
 			/** Adds the tint for the current sprite
 			 */
@@ -95,6 +99,8 @@ namespace MINX
 			 *	@param y the Y value to draw the texture to on the screen
 			 */
 			void Draw(Texture2D* texture, float x, float y);
+			
+			void Draw(Texture2D* texture, Vector2 pos, Vector2 depth);
 
 			/** Adds the texture to the list of texture instances to draw to the screen
 			 *	@param texture The texture to draw the the screen
